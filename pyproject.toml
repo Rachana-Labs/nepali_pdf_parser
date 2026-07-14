@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nepali-pdf-parser"
+version = "0.1.0"
+description = "Extract Unicode Devanagari text from Nepali PDFs via font-mapping or OCR"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+dependencies = [
+    "PyMuPDF>=1.23",
+    "Pillow>=10",
+    "pytesseract>=0.3",
+]
+
+[project.scripts]
+nepali-pdf-parser = "nepali_pdf_parser.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["nepali_pdf_parser*"]
+
+[tool.setuptools.package-data]
+nepali_pdf_parser = ["data/*.json"]
