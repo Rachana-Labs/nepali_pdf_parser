@@ -16,6 +16,41 @@ legacy fonts (Preeti, Gorkhapatra, etc.) or are scanned/image-only pages.
    shared pool of worker processes, so cores stay busy regardless of the
    text/OCR mix on a given document.
 
+## Prerequisites
+
+OCR fallback needs the **Tesseract OCR engine** installed as a system
+binary, plus its **Nepali language data**. `pip install` only installs
+`pytesseract`, a thin Python wrapper that shells out to a `tesseract`
+executable on your system — it does not install Tesseract itself. If
+Tesseract isn't found (or the `nep` language pack isn't installed), OCR
+fallback pages will fail; font-based text extraction still works fine
+without it.
+
+**Debian / Ubuntu:**
+```bash
+sudo apt install tesseract-ocr tesseract-ocr-nep
+```
+
+**macOS (Homebrew):**
+```bash
+brew install tesseract tesseract-lang
+```
+
+**Windows:**
+Install Tesseract via the [UB Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki),
+then download `nep.traineddata` from the
+[tessdata repo](https://github.com/tesseract-ocr/tessdata) and place it in
+`C:\Program Files\Tesseract-OCR\tessdata`. Make sure the Tesseract install
+directory is on your `PATH`.
+
+Verify both are working with:
+```bash
+tesseract --list-langs
+```
+`nep` should appear in the list. You can also run
+`nepali-pdf-parser --list-fonts` to confirm the package itself is set up
+correctly (this checks `map.json`, not Tesseract).
+
 ## Installation
 
 ### pip
