@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Extract Unicode Devanagari text from Nepali PDFs via font-mapping or OCR"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = {text = "GPL-3.0-or-later"}
 dependencies = [
     "PyMuPDF>=1.23",
     "Pillow>=10",
