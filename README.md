@@ -57,7 +57,6 @@ correctly (this checks `map.json`, not Tesseract).
 
 ```bash
 pip install -e .
-nepali-pdf-parser input.pdf
 ```
 
 ### Docker
@@ -76,16 +75,66 @@ docker run -v $(pwd):/data nepali-pdf-parser /data/input.pdf
 
 ## Usage
 
+### Python API (recommended)
+
+```python
+from nepali_pdf_parser import parse_pdf
+
+# Auto-detect text vs OCR per page — returns all text as a single string
+text = parse_pdf("document.pdf")
+print(text)
+
+# With options
+text = parse_pdf(
+    "scan.pdf",
+    ocr_lang="nep+eng",          # multi-language OCR
+    ocr_dpi=400,                  # higher DPI for better accuracy
+    force_ocr=True,               # skip text extraction, OCR everything
+    progress_callback=lambda p, m, d, t: print(f"Page {p+1}: {m} ({d}/{t})"),
+)
 ```
+
+#### `parse_pdf` signature
+
+```python
+def parse_pdf(
+    pdf_path: str,
+    *,
+    map_path: str | None = None,
+    ocr_lang: str = "nep",
+    ocr_dpi: int = 300,
+    ocr_preprocess: str = "auto",
+    force_ocr: bool = False,
+    force_text: bool = False,
+    max_workers: int | None = None,
+    progress_callback=None,
+) -> str:
+```
+
+| Argument | Default | Description |
+|---|---|---|
+| `pdf_path` | — | Path to the input PDF (required) |
+| `map_path` | bundled `map.json` | Path to custom font-mapping JSON |
+| `ocr_lang` | `"nep"` | Tesseract language code. Use `"nep+eng"` for mixed Nepali/English documents |
+| `ocr_dpi` | `300` | Render DPI for OCR pages |
+| `ocr_preprocess` | `"auto"` | Image preprocessing: `"auto"` (grayscale + autocontrast), `"binarize"` (adds Otsu threshold), or `"grayscale"` (no contrast adjustment) |
+| `force_ocr` | `False` | Skip text extraction; OCR every page |
+| `force_text` | `False` | Skip OCR; extract text from every page |
+| `max_workers` | auto (`min(pages, CPUs)`) | Number of parallel worker processes |
+| `progress_callback` | `None` | Called as `fn(page_num, mode, done, total)` after each page |
+
+### CLI
+
+```bash
 nepali-pdf-parser INPUT.pdf [-o OUTPUT.txt] [--map map.json] \
     [--ocr-lang nep] [--ocr-dpi 300] [--ocr-preprocess auto] \
     [--workers N] [--debug] [--force-ocr] [--force-text]
 ```
 
-### Options
+#### CLI options
 
 | Flag | Default | Description |
-|------|---------|-------------|
+|---|---|---|
 | `INPUT.pdf` | — | Path to the input PDF |
 | `-o, --output` | `<INPUT>.txt` | Output text file path |
 | `--map` | bundled `map.json` | Path to font mapping JSON |
